@@ -1,0 +1,77 @@
+// Enhanced Plant Watering Reminder App Database Schema
+// This is an example of the updated schema with users and plant photos
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// NEW: User model for authentication
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  plants Plant[]
+  
+  @@map("users")
+}
+
+// UPDATED: Plant model with user ownership
+model Plant {
+  id                    String   @id @default(uuid())
+  name                  String
+  species               String?
+  wateringFrequencyDays Int      @map("watering_frequency_days")
+  lastWatered           DateTime? @map("last_watered")
+  notes                 String?
+  profileImageUrl       String?  @map("profile_image_url") // Latest/chosen profile image
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // NEW: User ownership
+  userId                String   @map("user_id")
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relations
+  wateringHistory       WateringHistory[]
+  plantPhotos          PlantPhoto[]
+
+  @@map("plants")
+}
+
+// NEW: Dedicated PlantPhoto model for the picture book
+model PlantPhoto {
+  id          String   @id @default(uuid())
+  plantId     String   @map("plant_id")
+  imageUrl    String   @map("image_url")
+  caption     String?
+  takenAt     DateTime @default(now()) @map("taken_at")
+  isProfile   Boolean  @default(false) @map("is_profile") // Mark if this is the current profile photo
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  plant       Plant    @relation(fields: [plantId], references: [id], onDelete: Cascade)
+
+  @@map("plant_photos")
+}
+
+// UPDATED: WateringHistory can still have photos
+model WateringHistory {
+  id        String   @id @default(uuid())
+  plantId   String   @map("plant_id")
+  wateredAt DateTime @default(now()) @map("watered_at")
+  notes     String?
+  imageUrl  String?  @map("image_url") // Optional photo taken during watering
+
+  plant Plant @relation(fields: [plantId], references: [id], onDelete: Cascade)
+
+  @@map("watering_history")
+}

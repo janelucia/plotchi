@@ -1,0 +1,67 @@
+// Plant Watering Reminder App Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  plants Plant[]
+  
+  @@map("users")
+}
+
+model Plant {
+  id                    String   @id @default(uuid())
+  name                  String
+  species               String?
+  wateringFrequencyDays Int      @map("watering_frequency_days")
+  lastWatered           DateTime? @map("last_watered")
+  notes                 String?
+  profileImageUrl       String?  @map("profile_image_url") // Current profile photo
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Demo user relationship - all plants belong to demo user for now
+  userId                String   @map("user_id")
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  wateringHistory       WateringHistory[]
+  plantPhotos          PlantPhoto[]
+
+  @@map("plants")
+}
+
+model PlantPhoto {
+  id          String   @id @default(uuid())
+  plantId     String   @map("plant_id")
+  imageUrl    String   @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  plant       Plant    @relation(fields: [plantId], references: [id], onDelete: Cascade)
+
+  @@map("plant_photos")
+}
+
+model WateringHistory {
+  id        String   @id @default(uuid())
+  plantId   String   @map("plant_id")
+  wateredAt DateTime @default(now()) @map("watered_at")
+  notes     String?
+  imageUrl  String?  @map("image_url")
+
+  plant Plant @relation(fields: [plantId], references: [id], onDelete: Cascade)
+
+  @@map("watering_history")
+}
