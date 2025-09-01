@@ -12,17 +12,44 @@ node_modules
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
 # Misc
 .DS_Store
 .fleet
 .idea
+*.swp
+*.swo
+*~
 
 # Local env files
 .env
 .env.*
 !.env.example
 
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads (keep structure but ignore actual files)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Prisma
 /app/generated/prisma
 
-/app/generated/prisma
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
