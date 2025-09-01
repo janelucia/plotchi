@@ -1,5 +1,5 @@
-import { authenticateUser } from '~/server/utils/auth'
-import { setUserSession } from '~/server/utils/session'
+import { authenticateUser } from '../../utils/auth'
+import { setUserSession } from '../../utils/session'
 
 export default defineEventHandler(async (event) => {
   const { email, password } = await readBody(event)

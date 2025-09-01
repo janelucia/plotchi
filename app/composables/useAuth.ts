@@ -1,22 +1,31 @@
 import type { User } from "~/types/database"
 
+const globalUser = ref<User | null>(null)
+const isLoading = ref(false)
+const isHydrated = ref(false)
+
 export const useAuth = () => {
-  const user = ref<User | null>(null)
-  const isLoggedIn = computed(() => !!user.value)
+  const isLoggedIn = computed(() => !!globalUser.value)
   
   const fetchUser = async () => {
+    if (isLoading.value) return
+    isLoading.value = true
+    
     try {
       const response = await $fetch<{ user: User }>('/api/auth/me')
-      user.value = response.user
+      globalUser.value = response.user
     } catch (error) {
-      user.value = null
+      globalUser.value = null
+    } finally {
+      isLoading.value = false
+      isHydrated.value = true
     }
   }
   
   const logout = async () => {
     try {
       await $fetch('/api/auth/logout', { method: 'POST' })
-      user.value = null
+      globalUser.value = null
       await navigateTo('/login')
     } catch (error) {
       console.error('Logout error:', error)
@@ -24,7 +33,9 @@ export const useAuth = () => {
   }
   
   const requireAuth = async () => {
-    await fetchUser()
+    if (!globalUser.value) {
+      await fetchUser()
+    }
     if (!isLoggedIn.value) {
       await navigateTo('/login')
       return false
@@ -33,8 +44,9 @@ export const useAuth = () => {
   }
   
   return {
-    user: readonly(user),
+    user: readonly(globalUser),
     isLoggedIn,
+    isHydrated: readonly(isHydrated),
     fetchUser,
     logout,
     requireAuth

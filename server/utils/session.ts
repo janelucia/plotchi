@@ -1,30 +1,35 @@
-import type { H3Event } from 'h3'
-
 export interface UserSession {
   id: string
   email: string
   name: string
 }
 
-export async function getUserSession(event: H3Event): Promise<UserSession | null> {
-  return await getServerSession(event, {
-    password: useRuntimeConfig().sessionSecret
+export async function getUserSession(event: any): Promise<UserSession | null> {
+  const session = getCookie(event, 'user-session')
+  if (!session) return null
+  
+  try {
+    return JSON.parse(Buffer.from(session, 'base64').toString())
+  } catch {
+    return null
+  }
+}
+
+export async function setUserSession(event: any, user: UserSession) {
+  const sessionData = Buffer.from(JSON.stringify(user)).toString('base64')
+  setCookie(event, 'user-session', sessionData, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7 // 7 days
   })
 }
 
-export async function setUserSession(event: H3Event, user: UserSession) {
-  await setServerSession(event, {
-    password: useRuntimeConfig().sessionSecret
-  }, user)
+export async function clearUserSession(event: any) {
+  deleteCookie(event, 'user-session')
 }
 
-export async function clearUserSession(event: H3Event) {
-  await clearServerSession(event, {
-    password: useRuntimeConfig().sessionSecret
-  })
-}
-
-export async function requireUserSession(event: H3Event): Promise<UserSession> {
+export async function requireUserSession(event: any): Promise<UserSession> {
   const session = await getUserSession(event)
   if (!session) {
     throw createError({

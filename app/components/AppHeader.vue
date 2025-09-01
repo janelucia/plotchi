@@ -58,17 +58,27 @@
 
           <!-- User Menu -->
           <div class="flex items-center gap-3 mr-4">
-            <div v-if="user" class="dropdown dropdown-end">
-              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center">
+            <div v-if="isHydrated && user" class="dropdown dropdown-end">
+              <button
+                tabindex="0"
+                role="button"
+                class="btn btn-circle btn-outline">
+                <p>
                   {{ user.name.charAt(0).toUpperCase() }}
-                </div>
-              </div>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                </p>
+              </button>
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li class="menu-title">
                   <span>{{ user.name }}</span>
                 </li>
                 <li><button @click="handleLogout">Logout</button></li>
+                <li class="border-t pt-1 mt-1">
+                  <button @click="handleDeleteAccount" class="text-error hover:bg-error/10">
+                    Delete Account
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
@@ -100,16 +110,35 @@ withDefaults(defineProps<Props>(), {
   urgentPlants: 0,
 });
 
-const { user, logout } = useAuth();
+const { user, logout, fetchUser, isHydrated } = useAuth();
 
-onMounted(() => {
+onMounted(async () => {
   if (user.value === null) {
-    const { fetchUser } = useAuth();
-    fetchUser();
+    await fetchUser();
   }
 });
 
 const handleLogout = async () => {
   await logout();
+};
+
+const handleDeleteAccount = async () => {
+  const confirmed = confirm(
+    'Are you sure you want to delete your account? This will permanently remove all your plants and data. This action cannot be undone.'
+  );
+  
+  if (!confirmed) return;
+  
+  try {
+    await $fetch('/api/auth/delete-account', {
+      method: 'DELETE'
+    });
+    
+    // User is automatically logged out by the API
+    await navigateTo('/register');
+  } catch (error) {
+    console.error('Delete account error:', error);
+    alert('Failed to delete account. Please try again.');
+  }
 };
 </script>

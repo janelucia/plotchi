@@ -1,8 +1,11 @@
 import { prisma } from "../../../../utils/prisma";
 import { unlink } from "fs/promises";
 import path from "path";
+import { requireUserSession } from "../../../../utils/session";
 
 export default defineEventHandler(async (event) => {
+  const user = await requireUserSession(event);
+  
   try {
     const plantId = getRouterParam(event, "id");
     const photoId = getRouterParam(event, "photoId");
@@ -16,9 +19,12 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Verify plant exists
-    const plant = await prisma.plant.findUnique({
-      where: { id: plantId },
+    // Verify plant exists and belongs to user
+    const plant = await prisma.plant.findFirst({
+      where: { 
+        id: plantId,
+        userId: user.id 
+      },
     });
 
     if (!plant) {

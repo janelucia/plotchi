@@ -1,8 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../../utils/prisma";
+import { requireUserSession } from "../../../utils/session";
 
 export default defineEventHandler(async (event) => {
+  const user = await requireUserSession(event);
+  
   try {
     const plantId = getRouterParam(event, "id");
     const body = await readBody(event);
@@ -33,9 +34,12 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Check if plant exists
-    const existingPlant = await prisma.plant.findUnique({
-      where: { id: plantId },
+    // Check if plant exists and belongs to user
+    const existingPlant = await prisma.plant.findFirst({
+      where: { 
+        id: plantId,
+        userId: user.id 
+      },
     });
 
     if (!existingPlant) {
@@ -51,6 +55,7 @@ export default defineEventHandler(async (event) => {
       data: {
         ...(body.name && { name: body.name }),
         ...(body.species !== undefined && { species: body.species }),
+        ...(body.location !== undefined && { location: body.location }),
         ...(body.wateringFrequencyDays && {
           wateringFrequencyDays: body.wateringFrequencyDays,
         }),

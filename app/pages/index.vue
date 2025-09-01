@@ -35,29 +35,21 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else class="flex flex-col items-center justify-center h-64">
+        <div
+          v-else
+          class="flex flex-col items-center justify-center h-64 gap-4">
           <div
-            class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-            <svg
-              class="w-8 h-8 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 21c0 .5 0 1.5-1 2h8c-1-.5-1-1.5-1-2" />
-            </svg>
+            class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+            <Icon name="mdi:leaf" class="text-emerald-700" size="32" />
           </div>
           <h3 class="text-lg font-medium text-gray-900 mt-4">No plants yet</h3>
           <p class="text-gray-500 mt-2">
             Add your first plant to start tracking care schedules
           </p>
-          <button
-            @click="showAddPlant = true"
-            class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors mt-6">
-            Add Plant
+          <button @click="$router.push('/plants/new')" class="btn btn-primary">
+            <Icon name="mdi:plus" class="w-4 h-4" />
+
+            <span class="hidden sm:inline">Add Plant</span>
           </button>
         </div>
       </div>
@@ -67,10 +59,10 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
-})
+  middleware: "auth",
+});
 
-const { requireAuth } = useAuth()
+const { requireAuth } = useAuth();
 
 const wateringPlantId = ref<string | null>(null);
 
@@ -84,7 +76,7 @@ const {
 } = usePlants();
 
 onMounted(async () => {
-  await requireAuth()
+  await requireAuth();
   fetchPlants();
 });
 
