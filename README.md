@@ -1,6 +1,6 @@
 # Plant Tamagotchi - Plant Care Reminder App
 
-A beautiful, modern web application for tracking and caring for your plants. Built with Nuxt 3, Prisma, and SQLite.
+A modern web application for tracking and caring for your plants. Built with Nuxt 3, Prisma, and SQLite.
 
 ## Features
 
