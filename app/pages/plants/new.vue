@@ -74,6 +74,35 @@
               @keyup.enter="nextStep" />
           </div>
 
+          <!-- Popular Plants Suggestions -->
+          <div class="collapse collapse-arrow">
+            <input type="checkbox" class="peer" />
+            <div
+              class="collapse-title text-lg font-medium flex items-center gap-2">
+              <Icon name="mdi:leaf" class="w-5 h-5 text-green-500" />
+              Popular plant species
+              <div class="badge badge-outline">
+                {{ popularSpecies.length }}
+              </div>
+            </div>
+            <div class="collapse-content">
+              <div class="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  v-for="species in popularSpecies"
+                  :key="species"
+                  @click="plantData.species = species"
+                  class="btn btn-outline"
+                  :class="plantData.species === species ? 'btn-primary' : ''">
+                  <Icon
+                    v-if="plantData.species === species"
+                    name="mdi:check"
+                    class="w-4 h-4" />
+                  {{ species }}
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="form-control">
             <label class="label">
               <span class="label-text font-semibold">Location (Optional)</span>
@@ -86,30 +115,35 @@
               @keyup.enter="nextStep" />
           </div>
 
-          <!-- Popular Plants Suggestions -->
-          <div class="divider">Popular plant choices</div>
-          <div class="grid grid-cols-2 gap-3">
-            <button
-              v-for="species in popularSpecies"
-              :key="species"
-              @click="plantData.species = species"
-              class="btn btn-outline"
-              :class="plantData.species === species ? 'btn-secondary' : ''">
-              {{ species }}
-            </button>
-          </div>
-
           <!-- Popular Location Suggestions -->
-          <div class="divider">Popular locations</div>
-          <div class="grid grid-cols-2 gap-3">
-            <button
-              v-for="location in popularLocations"
-              :key="location"
-              @click="plantData.location = location"
-              class="btn btn-outline"
-              :class="plantData.location === location ? 'btn-secondary' : ''">
-              {{ location }}
-            </button>
+          <div class="collapse collapse-arrow">
+            <input type="checkbox" class="peer" />
+            <div
+              class="collapse-title text-lg font-medium flex items-center gap-2">
+              <Icon name="mdi:home" class="w-5 h-5 text-blue-500" />
+              Popular locations
+              <div class="badge badge-outline badge-sm">
+                {{ popularLocations.length }}
+              </div>
+            </div>
+            <div class="collapse-content">
+              <div class="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  v-for="location in popularLocations"
+                  :key="location"
+                  @click="plantData.location = location"
+                  class="btn btn-outline btn-sm"
+                  :class="
+                    plantData.location === location ? 'btn-secondary' : ''
+                  ">
+                  <Icon
+                    v-if="plantData.location === location"
+                    name="mdi:check"
+                    class="w-4 h-4" />
+                  {{ location }}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </OnboardingView>
@@ -342,6 +376,8 @@
 import OnboardingView from "~/components/ui/OnboardingView.vue";
 import CameraModal from "~/components/ui/CameraModal.vue";
 
+const { data: plants } = useFetch("/api/plants");
+
 type PlantData = {
   name: string;
   species: string;
@@ -379,7 +415,7 @@ const steps: Step[] = [
 ];
 
 // Popular species suggestions
-const popularSpecies = [
+const staticPopularSpecies = [
   "Snake Plant",
   "Pothos",
   "Monstera",
@@ -436,6 +472,26 @@ function getWateringDescription() {
   return "Low maintenance";
 }
 
+function getPlantSpecies(): string[] {
+  if (!plants.value?.data) return [];
+
+  return Array.from(
+    new Set(
+      plants.value.data
+        .map((p: any) => p.species)
+        .filter(
+          (species: string) => species && species.trim().length > 0,
+        ) as string[],
+    ),
+  ).sort();
+}
+
+const popularSpecies = computed(() => {
+  const speciesFromPlants = getPlantSpecies();
+  const combined = [...speciesFromPlants, ...staticPopularSpecies];
+  return Array.from(new Set(combined));
+});
+
 function nextStep() {
   if (canProceed.value && currentStep.value < steps.length - 1) {
     currentStep.value++;
@@ -458,7 +514,6 @@ function handleBackNavigation() {
 
 async function handlePhotoSelected(photo: any) {
   try {
-    // Convert canvas data URL to blob and upload to server
     const response = await fetch(photo.dataUrl);
     const blob = await response.blob();
 
