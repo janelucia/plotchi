@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+type Props = {
   showBreadcrumb?: boolean;
   breadcrumbTitle?: string;
   showStats?: boolean;

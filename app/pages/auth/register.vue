@@ -106,12 +106,14 @@ const clearErrors = () => {
   errors.general = ''
 }
 
+const { setUser } = useAuth()
+
 const handleRegister = async () => {
   clearErrors()
   isLoading.value = true
 
   try {
-    await $fetch('/api/auth/register', {
+    const response = await $fetch('/api/auth/register', {
       method: 'POST',
       body: {
         name: form.name,
@@ -120,6 +122,9 @@ const handleRegister = async () => {
       }
     })
 
+    // Update the user state with the registration response
+    setUser(response.user)
+    
     await navigateTo('/')
   } catch (error) {
     if (error.statusCode === 400) {

@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    sessionSecret: process.env.NUXT_SESSION_SECRET || 'your-secret-key-change-in-production'
-  }
+    sessionSecret:
+      process.env.NUXT_SESSION_SECRET || "your-secret-key-change-in-production",
+  },
 });

@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 
-export interface UploadResult {
+export type UploadResult = {
   success: boolean;
   url?: string;
   error?: string;
@@ -15,6 +15,12 @@ export async function saveUploadedImage(
   plantId?: string,
 ): Promise<UploadResult> {
   try {
+    if (!file) {
+      return {
+        success: false,
+        error: "No file provided",
+      };
+    }
     // Create uploads directory structure
     // If plantId is provided: uploads/plants/[plantId]/
     // Otherwise: uploads/[subdir]/
@@ -58,6 +64,10 @@ export async function saveUploadedImage(
 }
 
 export function isValidImageFile(file: File): boolean {
+  if (!file) {
+    return false;
+  }
+  
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
   const maxSize = 10 * 1024 * 1024; // 10MB
 

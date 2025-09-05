@@ -26,6 +26,7 @@ model Plant {
   id                    String   @id @default(uuid())
   name                  String
   species               String?
+  location              String?
   wateringFrequencyDays Int      @map("watering_frequency_days")
   lastWatered           DateTime? @map("last_watered")
   notes                 String?

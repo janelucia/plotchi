@@ -7,7 +7,7 @@ export type PlantStatusType =
   | "due-today"
   | "due-soon";
 
-export interface StatusConfig {
+export type StatusConfig = {
   text: string;
   class: string;
   dotClass: string;
@@ -21,7 +21,7 @@ export interface StatusConfig {
   buttonText: string;
 }
 
-export interface UrgencyMessage {
+export type UrgencyMessage = {
   title: string;
   subtitle: string;
   bgClass: string;

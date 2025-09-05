@@ -58,6 +58,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Plant } from "@prisma/client";
+
 definePageMeta({
   middleware: "auth",
 });
@@ -65,8 +67,6 @@ definePageMeta({
 const { requireAuth } = useAuth();
 
 const wateringPlantId = ref<string | null>(null);
-
-const showAddPlant = ref(false);
 
 const {
   plants,
@@ -96,7 +96,7 @@ const waterPlant = async (id: string, imageUrl?: string) => {
 
 const urgentPlantsCount = computed(() => {
   const now = new Date();
-  return plants.value.filter((plant) => {
+  return plants.value.filter((plant: Plant) => {
     if (!plant.lastWatered) return true; // Never watered
     const lastWatered = new Date(plant.lastWatered);
     const nextWateringTime =

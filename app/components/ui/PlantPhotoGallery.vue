@@ -93,14 +93,14 @@
 <script setup lang="ts">
 import CameraModal from "./CameraModal.vue";
 
-interface PlantPhoto {
+type PlantPhoto = {
   id: string;
   plantId: string;
   imageUrl: string;
   createdAt: string;
 }
 
-interface PlantPhotoGalleryProps {
+type PlantPhotoGalleryProps = {
   plantId: string;
   plantName: string;
   currentProfileImage?: string | null;

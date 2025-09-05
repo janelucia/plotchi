@@ -1,6 +1,6 @@
-import type { Plant, WateringHistory } from "@prisma/client";
+import type { Plant, WateringHistory, User } from "@prisma/client";
 
-export type { Plant, WateringHistory };
+export type { Plant, WateringHistory, User };
 
 export type PlantWithHistory = Plant & {
   wateringHistory: WateringHistory[];
@@ -9,6 +9,7 @@ export type PlantWithHistory = Plant & {
 export type CreatePlantData = {
   name: string;
   species?: string;
+  location?: string;
   wateringFrequencyDays: number;
   notes?: string;
   imageUrl?: string;
@@ -32,8 +33,10 @@ export type PlantStatus = {
   id: string;
   name: string;
   species?: string;
+  location?: string;
   lastWatered?: Date;
   wateringFrequencyDays: number;
+  profileImageUrl?: string;
   daysUntilNextWatering: number;
   isOverdue: boolean;
   daysSinceWatered?: number;

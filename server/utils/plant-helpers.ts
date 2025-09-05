@@ -1,5 +1,5 @@
 import type { Plant } from "@prisma/client";
-import type { PlantStatus } from "../../app/types/database";
+import type { PlantStatus } from "../../types/database";
 
 export function calculatePlantStatus(plant: Plant): PlantStatus {
   const now = new Date();
@@ -24,6 +24,7 @@ export function calculatePlantStatus(plant: Plant): PlantStatus {
     id: plant.id, // keep as string if it's a UUID
     name: plant.name,
     species: plant.species ?? undefined,
+    location: plant.location ?? undefined,
     lastWatered: plant.lastWatered ?? undefined,
     wateringFrequencyDays: plant.wateringFrequencyDays,
     profileImageUrl: plant.profileImageUrl ?? undefined,

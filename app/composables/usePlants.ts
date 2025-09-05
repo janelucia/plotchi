@@ -1,4 +1,4 @@
-import type { Plant, PlantWithHistory } from "~/types/database";
+import type { Plant, PlantWithHistory } from "../../types/database";
 
 export const usePlants = () => {
   // Global state for all plants
@@ -18,6 +18,7 @@ export const usePlants = () => {
         id: item.id,
         name: item.name,
         species: item.species ?? null,
+        location: item.location ?? null,
         wateringFrequencyDays: item.wateringFrequencyDays,
         lastWatered: item.lastWatered ? new Date(item.lastWatered) : null,
         notes: item.notes ?? null,

@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
     const file = form[0];
 
-    if (!file.filename || !file.data) {
+    if (!file || !file.filename || !file.data) {
       throw createError({
         statusCode: 400,
         statusMessage: "Invalid file data",
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
     // Validate file type (images only)
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type || "")) {
+    if (!file.type || !allowedTypes.includes(file.type)) {
       throw createError({
         statusCode: 400,
         statusMessage: "Only image files (JPEG, PNG, WebP) are allowed",

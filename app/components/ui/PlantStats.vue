@@ -29,7 +29,7 @@
 import type { Plant } from "@prisma/client";
 import { PlantStatusHelper } from "@/helpers/plantStatus";
 
-interface Props {
+type Props = {
   plant: Plant;
   variant?: "default" | "large" | "compact";
 }

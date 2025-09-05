@@ -1,10 +1,10 @@
 import { prisma } from "../../utils/prisma";
-import type { CreatePlantData } from "~/types/database";
+import type { CreatePlantData } from "../../../types/database";
 import { requireUserSession } from "../../utils/session";
 
 export default defineEventHandler(async (event) => {
   const user = await requireUserSession(event);
-  
+
   try {
     const body = (await readBody(event)) as CreatePlantData;
 
@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
       data: {
         name: body.name.trim(),
         species: body.species?.trim() || null,
+        location: body.location?.trim() || null,
         wateringFrequencyDays: body.wateringFrequencyDays,
         notes: body.notes?.trim() || null,
         profileImageUrl: body.imageUrl?.trim() || null,

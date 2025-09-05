@@ -74,8 +74,20 @@
               @keyup.enter="nextStep" />
           </div>
 
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Location (Optional)</span>
+            </label>
+            <input
+              v-model="plantData.location"
+              type="text"
+              placeholder="e.g., Living Room, Kitchen Window, Bedroom..."
+              class="input input-bordered input-lg w-full focus:input-primary"
+              @keyup.enter="nextStep" />
+          </div>
+
           <!-- Popular Plants Suggestions -->
-          <div class="divider">Popular choices</div>
+          <div class="divider">Popular plant choices</div>
           <div class="grid grid-cols-2 gap-3">
             <button
               v-for="species in popularSpecies"
@@ -84,6 +96,19 @@
               class="btn btn-outline"
               :class="plantData.species === species ? 'btn-secondary' : ''">
               {{ species }}
+            </button>
+          </div>
+
+          <!-- Popular Location Suggestions -->
+          <div class="divider">Popular locations</div>
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              v-for="location in popularLocations"
+              :key="location"
+              @click="plantData.location = location"
+              class="btn btn-outline"
+              :class="plantData.location === location ? 'btn-secondary' : ''">
+              {{ location }}
             </button>
           </div>
         </div>
@@ -217,6 +242,12 @@
               </span>
             </div>
             <div class="flex justify-between">
+              <span class="text-base-content/70">Location:</span>
+              <span class="font-medium">
+                {{ plantData.location || "Not specified" }}
+              </span>
+            </div>
+            <div class="flex justify-between">
               <span class="text-base-content/70">Watering:</span>
               <span class="font-medium">
                 Every {{ plantData.wateringFrequencyDays }} day{{
@@ -311,18 +342,19 @@
 import OnboardingView from "~/components/ui/OnboardingView.vue";
 import CameraModal from "~/components/ui/CameraModal.vue";
 
-interface PlantData {
+type PlantData = {
   name: string;
   species: string;
+  location: string;
   wateringFrequencyDays: number;
   notes: string;
   imageUrl: string | null;
-}
+};
 
-interface Step {
+type Step = {
   title: string;
   key: string;
-}
+};
 
 // Reactive data
 const currentStep = ref(0);
@@ -331,6 +363,7 @@ const isSubmitting = ref(false);
 const plantData = reactive<PlantData>({
   name: "",
   species: "",
+  location: "",
   wateringFrequencyDays: 7,
   notes: "",
   imageUrl: null,
@@ -355,6 +388,16 @@ const popularSpecies = [
   "Spider Plant",
   "Rubber Plant",
   "Aloe Vera",
+];
+
+// Popular location suggestions
+const popularLocations = [
+  "Living Room",
+  "Kitchen",
+  "Bedroom",
+  "Bathroom",
+  "Office",
+  "Balcony",
 ];
 
 // Watering frequency presets

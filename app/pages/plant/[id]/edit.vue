@@ -76,6 +76,26 @@
             </div>
           </div>
 
+          <!-- Location -->
+          <div class="form-control">
+            <label class="label pb-2">
+              <span class="label-text text-base font-semibold">Location</span>
+              <span class="label-text-alt text-base-content/60">Optional</span>
+            </label>
+            <input
+              v-model="formData.location"
+              type="text"
+              placeholder="e.g., Living Room, Kitchen Window, Bedroom"
+              class="input input-bordered input-lg w-full focus:input-primary"
+              :class="{ 'input-error': errors.location }" />
+            <div v-if="errors.location" class="label pt-1">
+              <span class="label-text-alt text-error flex items-center gap-1">
+                <Icon name="mdi:alert-circle" class="w-4 h-4" />
+                {{ errors.location }}
+              </span>
+            </div>
+          </div>
+
           <!-- Watering Frequency -->
           <div class="form-control">
             <label class="label pb-2">
@@ -160,6 +180,7 @@ const plant = computed(() => plants.value.find((p) => p.id === plantId));
 const formData = ref({
   name: "",
   species: "",
+  location: "",
   wateringFrequencyDays: 7,
   notes: "",
 });
@@ -170,6 +191,7 @@ watchEffect(() => {
     formData.value = {
       name: plant.value.name || "",
       species: plant.value.species || "",
+      location: plant.value.location || "",
       wateringFrequencyDays: plant.value.wateringFrequencyDays || 7,
       notes: plant.value.notes || "",
     };

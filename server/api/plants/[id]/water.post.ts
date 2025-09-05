@@ -50,7 +50,8 @@ export default defineEventHandler(async (event) => {
             notes = field.data.toString().trim() || null;
           } else if (field.name === "photo" && field.data && field.filename) {
             // Create a File-like object from the form data
-            const file = new File([field.data], field.filename, {
+            const uint8Array = new Uint8Array(field.data);
+            const file = new File([uint8Array], field.filename, {
               type: field.type || "image/jpeg",
             });
 

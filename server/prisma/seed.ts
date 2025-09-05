@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../utils/auth";
 
 const prisma = new PrismaClient();
 
@@ -19,6 +20,7 @@ async function main() {
       id: "demo-user-id",
       email: "demo@plant-tamagotchi.com",
       name: "Demo User",
+      password: await hashPassword("demo123"),
     },
   });
 
@@ -223,7 +225,7 @@ async function main() {
         )
       : "Never";
     const isOverdue = plant.lastWatered
-      ? daysSinceWatered >= plant.wateringFrequencyDays
+      ? (typeof daysSinceWatered === "number" ? daysSinceWatered >= plant.wateringFrequencyDays : false)
       : true;
 
     console.log(`  📍 ${plant.name} (${plant.species})`);

@@ -1,6 +1,6 @@
 <template>
   <article
-    class="group relative bg-white rounded-2xl border border-gray-200 transition-all duration-300 ease-out hover:-translate-y-1 overflow-hidden">
+    class="group relative bg-white rounded-2xl border border-gray-200 transition-all duration-300 ease-out hover:-translate-y-1 overflow-hidden max-w-fit">
     <div
       @click="$router.push(`/plant/${plant.id}`)"
       class="relative aspect-[5/3] overflow-hidden">
@@ -33,6 +33,10 @@
         </h2>
         <p class="text-sm text-gray-500">
           {{ plant.species || "Unknown species" }}
+        </p>
+        <p v-if="plant.location" class="text-xs text-gray-400 flex items-center gap-1">
+          <Icon name="mdi:map-marker" class="w-3 h-3" />
+          {{ plant.location }}
         </p>
       </header>
 
@@ -163,7 +167,7 @@ import PlantStats from "./ui/PlantStats.vue";
 import { Teleport } from "vue";
 import Modal from "./ui/Modal.vue";
 
-interface Props {
+type Props = {
   plant: Plant;
   loading?: boolean;
 }
@@ -228,7 +232,7 @@ const handlePlantWatered = (wateringData: {
 }) => {
   // Close the modal
   isModalOpen.value = false;
-  
+
   // Emit the water event with the image URL from the server
   emit("water", wateringData.plantId, wateringData.imageUrl);
 };

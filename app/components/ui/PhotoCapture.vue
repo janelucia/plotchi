@@ -61,11 +61,11 @@
 </template>
 
 <script setup lang="ts">
-interface PhotoCaptureProps {
+type PhotoCaptureProps = {
   modelValue?: string | null;
 }
 
-interface PhotoCaptureEmits {
+type PhotoCaptureEmits = {
   "update:modelValue": [value: string | null];
   "photo-captured": [imageUrl: string];
 }
